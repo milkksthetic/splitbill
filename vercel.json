@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "app.py",  // Your main Flask file
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "(.*)",
+      "dest": "app.py"   // Send all traffic to your Flask app
+    }
+  ]
+}
