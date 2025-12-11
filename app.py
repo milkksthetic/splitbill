@@ -479,3 +479,5 @@ def settlebills():
                        bill_id, split['user_id'])
 
     return redirect("/")
+
+app = app
