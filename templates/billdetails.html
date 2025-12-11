@@ -1,0 +1,87 @@
+<!-- I utilised ChatGPT, Blackbox AI, DeepSeek and Cursor AI to assist with generating code snippets, explanations and debugging.
+The essence of the work is my own, and I have reviewed and modified the AI-generated content. -->
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Bill Details
+{% endblock %}
+
+{% block main %}
+
+    <div class="container mt-4">
+    <!-- Bill Details -->
+        <h1 class="text-light">Bill Details</h1>
+        <br>
+        <div class="card mb-4">
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ bill.name }}</p>
+                <p><strong>Category:</strong> {{ bill.category }}</p>
+                <p><strong>Total Amount:</strong> {{ myr(bill.total_amount) }}</p>
+                <p><strong>Paid By:</strong> {{ bill.paid_by_username }}</p>
+            </div>
+        </div>
+        <br><br>
+
+    <!-- Items -->
+        <h2 class="text-light">Items:</h2>
+        <br>
+        <ul class="list-group mb-4">
+            {% for item in items %}
+                <li class="list-group-item bg-secondary text-light">
+                    {{ item.name }} - {{ myr(item.price) }} (Shared by {{ item.shared_users | default('No one') }})
+                </li>
+            {% endfor %}
+        </ul>
+        <br><br>
+
+    <!-- Summary -->
+        <h2 class="text-light">Summary:</h2>
+        <br>
+        <ul class="list-group mb-4">
+            {% for username, amount in summary.items() %}
+                <li class="list-group-item bg-secondary text-light">
+                    {{ username }} owes {{ myr(amount * 1.16) }}.
+                </li>
+            {% endfor %}
+        </ul>
+        <br><br>
+
+    <!-- Chart -->
+        <h3 class="text-light">Owed Amounts Chart:</h3>
+        <br>
+        <canvas id="owedChart" width="400" height="200"></canvas>
+        <br><br>
+
+    <!-- Back to Dashboard -->
+        <a href="/" class="btn btn-light mt-4">Back to Dashboard</a>
+    </div>
+
+<!-- Script for Generating the Owed Amounts Chart -->
+    <script>
+        const ctx = document.getElementById('owedChart').getContext('2d');
+        const summaryData = {
+            labels: [{% for username in summary.keys() %}'{{ username }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Amounts Owed',
+                data: [{% for amount in summary.values() %}{{ amount * 1.16 }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const owedChart = new Chart(ctx, {
+            type: 'bar',
+            data: summaryData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+{% endblock %}

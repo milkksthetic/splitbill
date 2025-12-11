@@ -1,0 +1,135 @@
+<!-- I utilised ChatGPT, Blackbox AI, DeepSeek and Cursor AI to assist with generating code snippets, explanations and debugging.
+The essence of the work is my own, and I have reviewed and modified the AI-generated content. -->
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Create New Bill
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Create a New Bill</h1>
+        <br><br>
+
+        <form action="/newbill" method="post">
+            <!-- Bill Details -->
+            <section class="mb-4">
+                <h2>Bill Details</h2>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="bill_name">Bill Name:</label>
+                        <input autocomplete="off" autofocus class="form-control" id="bill_name" name="bill_name" placeholder="Enter bill name" required type="text">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="category">Category:</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="Food">Food</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Rent">Rent</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3 justify-content-center">
+                    <div class="col-md-6">
+                        <label class="form-label" for="paid_by">Paid By:</label>
+                        <select class="form-select" id="paid_by" name="paid_by" required>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </section>
+            <br><br>
+
+            <!-- Items Section -->
+            <section class="mb-4" id="items-section">
+                <h2>Items</h2>
+                <div id="items">
+                    <div class="item mb-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label" for="item_name_0">Item Name:</label>
+                                <input autocomplete="off" class="form-control" id="item_name_0" name="items[0][name]" required type="text">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="item_price_0" class="form-label">Price:</label>
+                                <input class="form-control" id="item_price_0" name="items[0][price]" required step="0.01" type="number">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-start">Shared By:</label>
+                                <fieldset class="mt-2">
+                                    <div id="item_shared_by_0">
+                                        {% for user in users %}
+                                            <div class="form-check d-flex align-items-left" style="margin-bottom: 5px; margin-left: 10px">
+                                                <input class="form-check-input" id="shared_by_{{ user.id }}_0" name="items[0][shared_by][]" type="checkbox" value="{{ user.id }}">
+                                                <label class="form-check-label ms-2" for="shared_by_{{ user.id }}_0">{{ user.username }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+                <input id="item_count" name="item_count" type="hidden" value="1"> <!-- Hidden input for item count -->
+                <button class="btn btn-secondary" onclick="addItem()" type="button">Add Item</button>
+                <button class="btn btn-success" type="submit">Create Bill</button>
+            </section>
+        </form>
+    </div>
+    <script>
+        let itemCount = 1; // Start with one item
+
+        function addItem() {
+            // Create a new item div
+            const newItemDiv = document.createElement('div');
+            newItemDiv.className = 'item mb-3';
+
+            // Set the inner HTML for the new item with Bootstrap classes
+            newItemDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label" for="item_name_${itemCount}">Item Name:</label>
+                        <input autocomplete="off" class="form-control" id="item_name_${itemCount}" name="items[${itemCount}][name]" required type="text">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="item_price_${itemCount}">Price:</label>
+                        <input class="form-control" id="item_price_${itemCount}" name="items[${itemCount}][price]" required step="0.01" type="number">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-start">Shared By:</label>
+                        <fieldset class="mt-2">
+                            <div id="item_shared_by_${itemCount}">
+                                {% for user in users %}
+                                    <div class="form-check d-flex align-items-left" style="margin-bottom: 5px; margin-left: 10px">
+                                        <input class="form-check-input" id="shared_by_{{ user.id }}_${itemCount}" name="items[${itemCount}][shared_by][]" type="checkbox" value="{{ user.id }}">
+                                        <label class="form-check-label ms-2" for="shared_by_{{ user.id }}_${itemCount}">{{ user.username }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            `;
+
+            // Append the new item div to the items section
+            document.getElementById('items').appendChild(newItemDiv);
+
+            // Update the item count
+            itemCount++;
+
+            // Update the hidden input for item count
+            document.getElementById('item_count').value = itemCount;
+        }
+    </script>
+
+{% endblock %}
+

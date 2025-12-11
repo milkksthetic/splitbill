@@ -1,0 +1,99 @@
+<!-- I utilised ChatGPT, Blackbox AI, DeepSeek and Cursor AI to assist with generating code snippets, explanations and debugging.
+The essence of the work is my own, and I have reviewed and modified the AI-generated content. -->
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Friends
+{% endblock %}
+
+{% block main %}
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Friends</h1>
+        <br><br>
+
+        <div class="row">
+        <!-- Current Friends and Add a Friend -->
+            <div class="col-md-6">
+                <section>
+                    <h2>Your Friends</h2>
+                    <br>
+                    {% if friends %}
+                        <ul class="list-unstyled"> <!-- Use list-unstyled to remove bullet points -->
+                            {% for friend in friends %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    {{ friend.username }}
+                                    <form action="/removefriend" method="post" style="display:inline;">
+                                        <input name="friend_id" type="hidden" value="{{ friend.user_id }}">
+                                        <button class="btn btn-danger btn-sm" type="submit">Remove Friend</button>
+                                    </form>
+                                </li>
+                                <br>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No friends. Add some!</p>
+                    {% endif %}
+                </section>
+                <br><br>
+
+                <section>
+                    <h2>Add a Friend</h2>
+                    <br>
+                    <form action="/addfriend" method="post">
+                        <input autocomplete="off" name="username" placeholder="Enter friend's username" required type="text" class="form-control mb-2">
+                        <button class="btn btn-primary" type="submit">Send Friend Request</button>
+                    </form>
+                </section>
+            </div>
+
+        <!-- Pending and Outgoing Friend Requests -->
+            <div class="col-md-6">
+                <section>
+                    <h2>Pending Friend Requests</h2>
+                    <br>
+                    {% if pending_requests %}
+                        <ul class="list-unstyled">
+                            {% for request in pending_requests %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    {{ request.username }}
+                                    <div>
+                                        <form action="/acceptfriend" method="post" style="display:inline;">
+                                            <input name="friend_id" type="hidden" value="{{ request.user_id }}">
+                                            <button class="btn btn-success btn-sm" type="submit">Accept</button>
+                                        </form>
+                                        <form action="/removefriend" method="post" style="display:inline;">
+                                            <input name="friend_id" type="hidden" value="{{ request.user_id }}">
+                                            <button class="btn btn-danger btn-sm" type="submit">Reject</button>
+                                        </form>
+                                    </div>
+                                </li>
+                                <br>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No pending friend requests.</p>
+                    {% endif %}
+                </section>
+                <br><br>
+
+                <section>
+                    <h2>Outgoing Friend Requests</h2>
+                    <br>
+                    {% if outgoing_requests %}
+                        <ul class="list-unstyled">
+                            {% for request in outgoing_requests %}
+                                <li>{{ request.username }} (Request Sent)</li>
+                                <br>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No outgoing friend requests.</p>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

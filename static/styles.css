@@ -1,0 +1,110 @@
+/* I utilised Blackbox AI to assist with generating table styles and explanation.
+The essence of the work is my own, and I have reviewed and modified the AI-generated content. */
+
+/* Importing a monospaced font */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&display=swap');
+
+/* Dark Mode Colors */
+:root {
+    --background-color: #0d1117;
+    /* GitHub Dark Default Colour */
+    --text-color: #c9d1d9;
+    --link-color: #58a6ff;
+    --navbar-background: #161b22;
+    --alert-background: #2f363d;
+}
+
+/* Brand styles */
+nav .navbar-brand {
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+nav .navbar-brand .split {
+    color: #faa356;
+}
+
+nav .navbar-brand .bill {
+    color: #7ce38b;
+}
+
+/* Body styles */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Fira Code', monospace;
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: var(--navbar-background);
+}
+
+/* Alert styles */
+.alert {
+    background-color: var(--alert-background);
+    color: var(--text-color);
+}
+
+/* Link styles */
+a {
+    color: var(--link-color);
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Button styles */
+button {
+    background-color: #2e944b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #2b8a47;
+}
+
+h1 {
+    font-weight: 700;
+}
+
+/* Table styles */
+.table-dark {
+    background-color: #21262d;
+}
+
+.table-dark th {
+    background-color: #161b22;
+    color: #c9d1d9;
+}
+
+/* Add an outer border to the header row using Bootstrap's default border color */
+.table-dark thead tr {
+    border: 2px solid rgb(147, 150, 154);
+}
+
+.table-dark tbody tr:nth-child(odd) {
+    background-color: #2a2e35;
+}
+
+.table-dark tbody tr:nth-child(even) {
+    background-color: #21262d;
+}
+
+.table-dark tbody tr:hover {
+    background-color: #3b3f47;
+}
+
+/* Other styles */
+.text-success {
+    color: #7ce38b !important;
+}
+
+.text-start {
+    text-align: left !important;
+}

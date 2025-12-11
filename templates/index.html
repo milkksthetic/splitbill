@@ -1,0 +1,134 @@
+<!-- I utilised ChatGPT, Blackbox AI, DeepSeek and Cursor AI to assist with generating code snippets, explanations and debugging.
+The essence of the work is my own, and I have reviewed and modified the AI-generated content. -->
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block main %}
+
+<!-- Welcome Message -->
+    <div class="container">
+        <h1 class="text-center mb-4">Welcome back, {{ username }}!</h1>
+        <br><br>
+
+    <!-- Grand Summary -->
+        <h2 class="mb-3">Grand Summary</h2>
+        <table class="table table-dark table-striped custom-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Person</th>
+                    <th>Amount Owed to You</th>
+                    <th>Amount You Owe</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for summary in grand_summary %}
+                    <tr>
+                        <td>{{ summary.person }}</td>
+                        <td>{{ "%0.2f" | format((summary.amount_owed_to_you) | float) }}</td>
+                        <td>{{ "%0.2f" | format((summary.amount_you_owe) | float) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+    <!-- Recent Bills -->
+        <h2 class="mb-3">Recent Bills</h2>
+        <form action="/settlebills" id="billsForm" method="post">
+            <table class="table table-dark table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Settle</th>
+                        <th>Bill Name</th>
+                        <th>Category</th>
+                        <th>Total Amount</th>
+                        <th>Paid By</th>
+                        <th>Date Created</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in recent_bills %}
+                        <tr>
+                            <td>
+                                {% if bill.payment_status != 'Paid.' %}
+                                    <input name="bills" type="checkbox" value="{{ bill.id }}">
+                                {% else %}
+                                    <span class="text-success">Settled</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ bill.name }}</td>
+                            <td>{{ bill.category }}</td>
+                            <td>{{ "%0.2f" | format((bill.total_amount) | float) }}</td>
+                            <td>{{ bill.paid_by }}</td>
+                            <td>{{ bill.created_at }}</td>
+                            <td><a class="text-info" href="/billdetails?bill_id={{ bill.id }}">View</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="btn btn-success" type="submit">Settle Bills</button>
+        </form>
+
+    <!-- Pagination Links -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if previous_page %}
+                    <li class="page-item">
+                        <a class="page-link" href="/?page={{ previous_page }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for page in displayed_pages %}
+                    <li class="page-item {% if page == current_page %}active{% endif %}">
+                        <a class="page-link" href="/?page={{ page }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if next_page %}
+                    <li class="page-item">
+                        <a class="page-link" href="/?page={{ next_page }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <br><br>
+
+    <!-- Friends Section -->
+        <h2 class="mb-3">Friends</h2>
+        <table class="table table-dark table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Friend</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for friend in friends %}
+                    <tr>
+                        <td>{{ friend.username }}</td>
+                        <td>
+                            {% if friend.status == 'pending' %}
+                                <form action="/acceptfriend" method="post" style="display:inline;">
+                                    <input name="friend_id" type="hidden" value="{{ friend.id }}">
+                                    <button class="btn btn-primary btn-sm" type="submit">Accept</button>
+                                </form>
+                                <form action="/removefriend" method="post" style="display:inline;">
+                                    <input name="friend_id" type="hidden" value="{{ friend.id }}">
+                                    <button class="btn btn-danger btn-sm" type="submit">Reject</button>
+                                </form>
+                            {% elif friend.status == 'accepted' %}
+                                <span class="text-success">Friend</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
